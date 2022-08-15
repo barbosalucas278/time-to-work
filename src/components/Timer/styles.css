@@ -1,0 +1,11 @@
+.title{
+    font-size: 3rem;
+    font-weight: 600;
+    color: #fff;
+}
+.containerTimerDisplay{
+    height: 66vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
