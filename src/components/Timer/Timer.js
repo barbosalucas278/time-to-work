@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
@@ -28,6 +29,7 @@ function Timer() {
     } else {
       setTimerRun(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [go]);
   useInterval(() => {
     if (display > 0) {
