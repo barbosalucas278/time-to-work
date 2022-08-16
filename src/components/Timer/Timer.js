@@ -9,7 +9,6 @@ import Display from "../Display/Display";
 import "./styles.css";
 function Timer() {
   const schema = object().shape({
-    prepareInterval: number().required().max(15).min(5),
     workInterval: number().required().max(60).min(15),
     restInterval: number().required().max(60).min(15),
   });
@@ -17,7 +16,7 @@ function Timer() {
   const [go, setGo] = useState(false);
   const [timerRun, setTimerRun] = useState(null);
   const [display, setDisplay] = useState(0);
-  const [prepare, setPrepare] = useState(0);
+  const [prepare, setPrepare] = useState(10);
   const [prepareInterval, setPrepareInterval] = useState(false);
   const [work, setWork] = useState(0);
   const [workInterval, setWorkInterval] = useState(false);
@@ -39,8 +38,7 @@ function Timer() {
     }
   }, timerRun);
   function onSubmitIntervals(values) {
-    const { prepareInterval, workInterval, restInterval } = values;
-    setPrepare(prepareInterval);
+    const { workInterval, restInterval } = values;
     setWork(workInterval);
     setRest(restInterval);
     setGo(true);
@@ -80,7 +78,6 @@ function Timer() {
   function resetearTimer() {
     setGo(false);
     setDisplay(0);
-    setPrepare(0);
     setWork(0);
     setRest(0);
     setPrepareInterval(false);
@@ -94,14 +91,13 @@ function Timer() {
     setTimerRun(1000);
   }
   return (
-    <Container fluid className="bg-warning fixed-top">
+    <Container fluid className="fixed-top">
       <h1 className="title">Temporizador</h1>
-      <Row className="justify-content-center">
-        <Col xs={12} className="bg-info containerTimerDisplay">
+      <Row className="justify-content-center mt-sm-5">
+        <Col xs={12} sm={6} className="containerTimerDisplay">
           <Display seconds={display}></Display>
         </Col>
-        {/* <Col xs={12} className="bg-success"></Col> */}
-        <Col xs={12} className="bg-danger fixed-bottom">
+        <Col xs={12} sm={6} className="mt-5">
           <h2>Intervalos</h2>
           <Formik
             initialValues={{
@@ -114,28 +110,6 @@ function Timer() {
           >
             {({ values, errors, handleChange, handleSubmit }) => (
               <Form noValidate onSubmit={handleSubmit}>
-                <Form.Group
-                  as={Row}
-                  className="mb-3"
-                  controlId="formBasicPassword"
-                >
-                  <Form.Label column xs={3}>
-                    Preparación
-                  </Form.Label>
-                  <Col xs={9}>
-                    <Form.Control
-                      type="number"
-                      placeholder="Tiempo de preparación"
-                      name="prepareInterval"
-                      value={values.prepareInterval}
-                      onChange={handleChange}
-                      isValid={errors.prepareInterval}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.prepareInterval}
-                    </Form.Control.Feedback>
-                  </Col>
-                </Form.Group>
                 <Form.Group
                   as={Row}
                   className="mb-3"
@@ -189,7 +163,7 @@ function Timer() {
                   <>
                     <Button
                       variant="warning"
-                      className="mb-4"
+                      className="mb-4 me-3"
                       onClick={resetearTimer}
                     >
                       Resetear
