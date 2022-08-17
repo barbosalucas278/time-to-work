@@ -4,10 +4,13 @@ import React, { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import useSound from "use-sound";
 import { object, number } from "yup";
 import useInterval from "../../hooks/useInterval";
 import Display from "../Display/Display";
 import "./styles.css";
+import workSound from "../../assets/go.oga";
+import restSound from "../../assets/rest.oga";
 function Timer() {
   const schema = object().shape({
     workInterval: number().required().max(60).min(15),
@@ -23,6 +26,17 @@ function Timer() {
   const [workInterval, setWorkInterval] = useState(false);
   const [rest, setRest] = useState(0);
   const [restInterval, setRestInterval] = useState(false);
+  const [speakerWork, setSpeakerWork] = useState(null);
+  const [speakerRest, setSpeakerRest] = useState(null);
+  const [synth, setSynth] = useState(null);
+  const [playWork] = useSound(workSound);
+  const [playRest] = useSound(restSound);
+  useEffect(() => {
+    setSynth(window.speechSynthesis);
+    setSpeakerWork(new SpeechSynthesisUtterance());
+    setSpeakerRest(new SpeechSynthesisUtterance());
+  }, []);
+
   useEffect(() => {
     if (go) {
       crearIntervaloPrepare();
@@ -33,12 +47,22 @@ function Timer() {
   }, [go]);
   useInterval(() => {
     if (display > 0) {
+      evaluarSonidoSegunIntervalo();
       setDisplay(display - 1);
     } else {
       setTimerRun(null);
       eveluarIntervalo();
     }
   }, timerRun);
+  function evaluarSonidoSegunIntervalo() {
+    if (prepareInterval && display === prepare - 3) {
+      playWork();
+    } else if (workInterval && display === work - (work - 5)) {
+      playRest();
+    } else if (restInterval && display === rest - (rest - 7)) {
+      playWork();
+    }
+  }
   function onSubmitIntervals(values) {
     const { workInterval, restInterval } = values;
     setWork(workInterval);
@@ -94,7 +118,7 @@ function Timer() {
   }
   return (
     <Container fluid className="fixed-top">
-      <h1 className="title">Temporizador</h1>
+      <h1 className="title">TimeToWork</h1>
       <Row className="justify-content-center mt-sm-5">
         <Col xs={12} sm={6} className="containerTimerDisplay">
           <Display seconds={display}></Display>
