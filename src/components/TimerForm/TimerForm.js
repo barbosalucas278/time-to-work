@@ -28,16 +28,23 @@ function TimerForm(props) {
   return (
     <Formik
       initialValues={{
-        prepareInterval: 0,
         workInterval: 0,
         restInterval: 0,
       }}
       validationSchema={schema}
-      onSubmit={(values, formikHelpers) =>
-        onSubmitIntervals(values, formikHelpers)
-      }
+      onSubmit={(values, formikHelpers) => {
+        onSubmitIntervals(values, formikHelpers);
+      }}
     >
-      {({ values, errors, handleChange, handleSubmit }) => (
+      {({
+        values,
+        errors,
+        touched,
+        isValid,
+        handleChange,
+        handleSubmit,
+        handleBlur,
+      }) => (
         <Form noValidate onSubmit={handleSubmit}>
           <Form.Group as={Row} className="mb-3" controlId="workInterval">
             <Form.Label column xs={3}>
@@ -50,12 +57,15 @@ function TimerForm(props) {
                 placeholder="Tiempo de trabajo"
                 value={values.workInterval}
                 onChange={handleChange}
-                isValid={!errors.workInterval}
+                onBlur={handleBlur}
+                isValid={!errors.workInterval && values.workInterval}
               />
             </Col>
-            <Form.Control.Feedback type="invalid">
-              {errors.workInterval}
-            </Form.Control.Feedback>
+            {touched.workInterval && errors.workInterval && (
+              <Form.Label className="text-danger fw-bolder fs-small">
+                {errors.workInterval}
+              </Form.Label>
+            )}
           </Form.Group>
           <Form.Group as={Row} className="mb-3" controlId="restInterval">
             <Form.Label column xs={3}>
@@ -68,15 +78,23 @@ function TimerForm(props) {
                 placeholder="Tiempo de descanso"
                 value={values.restInterval}
                 onChange={handleChange}
-                isValid={!errors.restInterval}
+                onBlur={handleBlur}
+                isValid={!errors.restInterval && values.restInterval}
               />
             </Col>
-            <Form.Control.Feedback type="invalid">
-              {errors.restInterval}
-            </Form.Control.Feedback>
+            {touched.restInterval && errors.restInterval && (
+              <Form.Label className="text-danger fw-bolder fs-small">
+                {errors.restInterval}
+              </Form.Label>
+            )}
           </Form.Group>
           {!go && (
-            <Button variant="success" className="mb-4" type="submit">
+            <Button
+              variant="success"
+              className="m-0"
+              type="submit"
+              disabled={!isValid}
+            >
               Comenzar!
             </Button>
           )}
