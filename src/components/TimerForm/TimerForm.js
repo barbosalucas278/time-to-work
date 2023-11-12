@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Formik } from "formik";
 import { object, number } from "yup";
-import { Col, FormText, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 function TimerForm(props) {
   const {

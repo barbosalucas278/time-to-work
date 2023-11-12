@@ -122,7 +122,7 @@ function Timer() {
           <TimerForm
             onSubmitIntervals={handleSubmitIntervals}
             onResetTimer={handleResetTimer}
-            onPausetimer={handlerPauseTimer}
+            onPauseTimer={handlerPauseTimer}
             onContinueTimer={handleContinueTimer}
             go={go}
             timerRun={timerRun}
