@@ -1,34 +1,23 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import useSound from "use-sound";
 import useInterval from "../../hooks/useInterval";
 import Display from "../Display/Display";
 import "./styles.css";
-import workSound from "../../assets/go.oga";
-import restSound from "../../assets/rest.oga";
 import TimerForm from "../TimerForm/TimerForm";
+import { TextToSpeech } from "../../Helpers/TextToSpeech";
 function Timer() {
   //falta agregar los mansajes de error, las validaciones ya estan
   const [go, setGo] = useState(false);
   const [timerRun, setTimerRun] = useState(null);
   const [display, setDisplay] = useState(0);
-  const [prepare, setPrepare] = useState(10);
+  const [prepare, setPrepare] = useState(6);
   const [prepareInterval, setPrepareInterval] = useState(false);
   const [work, setWork] = useState(0);
   const [workInterval, setWorkInterval] = useState(false);
   const [rest, setRest] = useState(0);
   const [restInterval, setRestInterval] = useState(false);
-  const [speakerWork, setSpeakerWork] = useState(null);
-  const [speakerRest, setSpeakerRest] = useState(null);
-  const [synth, setSynth] = useState(null);
-  const [playWork] = useSound(workSound);
-  const [playRest] = useSound(restSound);
-  useEffect(() => {
-    setSynth(window.speechSynthesis);
-    setSpeakerWork(new SpeechSynthesisUtterance());
-    setSpeakerRest(new SpeechSynthesisUtterance());
-  }, []);
+  const [handlePlay, handleStop] = TextToSpeech();
 
   useEffect(() => {
     if (go) {
@@ -40,24 +29,28 @@ function Timer() {
   }, [go]);
   useInterval(() => {
     if (display > 0) {
-      evaluarSonidoSegunIntervalo();
       setDisplay(display - 1);
+      evaluarSonidoSegunIntervalo();
     } else {
       setTimerRun(null);
       eveluarIntervalo();
     }
   }, timerRun);
   function evaluarSonidoSegunIntervalo() {
-    if (prepareInterval && display === prepare - 3) {
-      playWork();
-    } else if (workInterval && display === work - (work - 5)) {
-      playRest();
-    } else if (restInterval && display === rest - (rest - 7)) {
-      playWork();
+    handleStop();
+    if (display - 1 === 0 && (prepareInterval || restInterval)) {
+      handlePlay("Vamos");
+    } else if (display - 1 === 0 && workInterval) {
+      handlePlay("Descanso");
+    } else if (prepareInterval && display < 5) {
+      handlePlay(display - 1);
+    } else if (workInterval && display < 5) {
+      handlePlay(display - 1);
+    } else if (restInterval && display < 5) {
+      handlePlay(display - 1);
     }
   }
   function handleSubmitIntervals(values, formikHelpers) {
-    console.log(formikHelpers);
     const { workInterval, restInterval } = values;
     setWork(workInterval);
     setRest(restInterval);
